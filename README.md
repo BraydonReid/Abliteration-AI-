@@ -1,13 +1,12 @@
 # LLM-Filters
 <ins>Purpose</ins> 
 
-We built this model to help understand the fragility of LLM models and how to better defend against Multi-turn prompt injection attacks.
-This repository displays the refusal directions and what it took to acheive it in order to modify a model to bypass it's preset refusal directions and display harmful responses. 
-The functionality of this model does fall short when it comes to accurately answering all harmful prompts as it is not fine tuned on these subjects. 
+This project aimed to see if it was possible to remove refusal directions in a Large Language Model to effectively "unfilter an AI". 
+The functionality of this model does fall short when it comes to accurately answering all harmful prompts, as it is not fine-tuned on these subjects. 
 
 <ins>Running the Code</ins>
 
-To run this, you will need to download your desired model and follow the instructions in the code to adjust the parameters effectively.
+To run this, you must download your desired model and follow the instructions in the code to adjust the parameters effectively.
 
 1st step:
 Download the Large Language Model that you want to unfilter
