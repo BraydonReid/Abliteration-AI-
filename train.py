@@ -200,7 +200,7 @@ for i in range(N_INST_TEST):
     print(f"\n--- Instruction #{i} ---")
     print("User:", harmful_inst_test[i][0]["content"])
     if i >= len(baseline_generations):
-        print("⚠️ No baseline completion.")
+        print("No baseline completion.")
         continue
     print("Baseline:", baseline_generations[i])
 
