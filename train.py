@@ -17,7 +17,7 @@ from typing import List
 torch.set_grad_enabled(False)
 
 # loading the model and tokenizer only on the CPU becuase ROCM is not available
-print("Loading model onto CPU (float32)...")
+print("Loading model onto CPU")
 model = HookedTransformer.from_pretrained_no_processing(
     "Qwen/Qwen-7B",
     local_files_only=True,
@@ -36,7 +36,7 @@ tokenizer.padding_side = "left"
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
-print("Model and tokenizer loaded successfully.\n")
+print("loaded successfully.\n")
 
 # this formats the data into a format that the model can understand
 def reformat_texts(texts):
@@ -78,7 +78,7 @@ batch_size = 16
 harmful_acts = defaultdict(list)
 harmless_acts = defaultdict(list)
 
-print("\nCollecting residual stream activations (CPU only)...")
+print("\nCollecting residual stream...")
 num_batches = (n_inst_train + batch_size - 1) // batch_size
 for i in tqdm(range(num_batches)):
     start, end = i * batch_size, min(n_inst_train, (i+1)*batch_size)
@@ -163,7 +163,7 @@ def direction_ablation_hook(activation, hook, direction):
     return activation - proj
 
 # tests the model with the harmful instructions to get the baseline completions
-print("\nGetting baseline completions...")
+print("\nGetting baseline")
 baseline_generations = get_generations(
     model, tokenizer, harmful_inst_test[:N_INST_TEST], fwd_hooks=[]
 )
@@ -176,7 +176,7 @@ for i, gen in enumerate(baseline_generations):
 EVAL_N = min(20, len(activation_scored))
 evals = []
 
-print("\nEvaluating inference-time ablations (top directions)...")
+print("\nlooking at top directions...")
 for dir_idx in range(EVAL_N):
     rd = activation_scored[dir_idx]
     hook_fn = functools.partial(direction_ablation_hook, direction=rd)
@@ -193,7 +193,7 @@ for idx, candidate in enumerate(evals):
     print(f"🔍 Candidate #{idx} has {len(candidate)} completions")
 
 # this allows us to see how each candidate direction changes the generation.
-print("\nShowing best non‑refusal candidate per instruction:")
+print("\nbest non‑refusal candidate per instruction:")
 blacklist = ["I cannot", "I can't"]
 
 for i in range(N_INST_TEST):
@@ -229,7 +229,7 @@ for b in tqdm(model.blocks, desc="Orthogonalizing blocks"):
     b.mlp.W_out.data   = get_orthogonalized_matrix(b.mlp.W_out.data, refusal_dir)
 
 # tests again with the orthogonalized weights
-print("\nGenerating after orthogonalization...")
+print("\nafter orthogonalization...")
 orth_gens = get_generations(model, tokenizer, harmful_inst_test[:N_INST_TEST])
 
 for i in range(N_INST_TEST):
